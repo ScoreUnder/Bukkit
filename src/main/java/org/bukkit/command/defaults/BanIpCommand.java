@@ -1,6 +1,10 @@
 package org.bukkit.command.defaults;
 
+import java.util.List;
 import java.util.regex.Pattern;
+
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -52,5 +56,16 @@ public class BanIpCommand extends VanillaCommand {
     @Override
     public boolean matches(String input) {
         return input.equalsIgnoreCase("ban-ip");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) throws IllegalArgumentException {
+        Validate.notNull(sender, "Sender cannot be null");
+        Validate.notNull(args, "Arguments cannot be null");
+
+        if (args.length == 2) {
+            return super.tabComplete(sender, args);
+        }
+        return ImmutableList.of();
     }
 }

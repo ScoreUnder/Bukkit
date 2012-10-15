@@ -1,10 +1,18 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class OpCommand extends VanillaCommand {
     public OpCommand() {
@@ -32,5 +40,39 @@ public class OpCommand extends VanillaCommand {
     @Override
     public boolean matches(String input) {
         return input.equalsIgnoreCase("op");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) throws IllegalArgumentException {
+        Validate.notNull(sender, "Sender cannot be null");
+        Validate.notNull(args, "Arguments cannot be null");
+
+        if (args.length == 2) {
+            if (!(sender instanceof Player)) {
+                return ImmutableList.of();
+            }
+
+            String lastWord = args[1];
+            if (lastWord.length() == 0) {
+                return ImmutableList.of();
+            }
+
+            Player senderPlayer = (Player) sender;
+
+            ArrayList<String> matchedPlayers = new ArrayList<String>();
+            for (Player player : sender.getServer().getOnlinePlayers()) {
+                String name = player.getName();
+                if (!senderPlayer.canSee(player) || player.isOp()) {
+                    continue;
+                }
+                if (StringUtil.startsWithIgnoreCase(name, lastWord)) {
+                    matchedPlayers.add(name);
+                }
+            }
+
+            Collections.sort(matchedPlayers, String.CASE_INSENSITIVE_ORDER);
+            return matchedPlayers;
+        }
+        return ImmutableList.of();
     }
 }

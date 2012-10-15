@@ -1,9 +1,16 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PardonCommand extends VanillaCommand {
     public PardonCommand() {
@@ -29,5 +36,23 @@ public class PardonCommand extends VanillaCommand {
     @Override
     public boolean matches(String input) {
         return input.equalsIgnoreCase("pardon");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) throws IllegalArgumentException {
+        Validate.notNull(sender, "Sender cannot be null");
+        Validate.notNull(args, "Arguments cannot be null");
+
+        if (args.length == 2) {
+            List<String> completions = new ArrayList<String>();
+            for (OfflinePlayer player : Bukkit.getBannedPlayers()) {
+                String name = player.getName();
+                if (StringUtil.startsWithIgnoreCase(name, args[1])) {
+                    completions.add(name);
+                }
+            }
+            return completions;
+        }
+        return ImmutableList.of();
     }
 }

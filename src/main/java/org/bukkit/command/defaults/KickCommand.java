@@ -1,10 +1,14 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class KickCommand extends VanillaCommand {
     public KickCommand() {
@@ -43,5 +47,13 @@ public class KickCommand extends VanillaCommand {
     @Override
     public boolean matches(String input) {
         return input.equalsIgnoreCase("kick");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) throws IllegalArgumentException {
+        if (args.length == 2) {
+            return super.tabComplete(sender, args);
+        }
+        return ImmutableList.of();
     }
 }

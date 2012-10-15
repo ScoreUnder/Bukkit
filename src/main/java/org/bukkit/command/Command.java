@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
 import com.google.common.collect.ImmutableList;
+import org.bukkit.util.StringUtil;
 
 /**
  * Represents a Command, which executes various tasks upon user input
@@ -81,10 +82,7 @@ public abstract class Command {
         ArrayList<String> matchedPlayers = new ArrayList<String>();
         for (Player player : sender.getServer().getOnlinePlayers()) {
             String name = player.getName();
-            if (!senderPlayer.canSee(player)) {
-                continue;
-            }
-            if (name.length() >= lastWord.length() && name.substring(0, lastWord.length()).equalsIgnoreCase(lastWord)) {
+            if (senderPlayer.canSee(player) && StringUtil.startsWithIgnoreCase(name, lastWord)) {
                 matchedPlayers.add(name);
             }
         }

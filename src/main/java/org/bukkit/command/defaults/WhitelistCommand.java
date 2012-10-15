@@ -105,8 +105,26 @@ public class WhitelistCommand extends VanillaCommand {
 
         if (args.length == 2) {
             return StringUtil.copyPartialMatches(args[1], WHITELIST_SUBCOMMANDS, new ArrayList<String>(WHITELIST_SUBCOMMANDS.size()));
-        } else if (args.length == 3 && (args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("remove"))) {
-            return super.tabComplete(sender, args);
+        } else if (args.length == 3) {
+            if (args[1].equalsIgnoreCase("add")) {
+                List<String> completions = new ArrayList<String>();
+                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+                    String name = player.getName();
+                    if (StringUtil.startsWithIgnoreCase(name, args[1]) && !player.isWhitelisted()) {
+                        completions.add(name);
+                    }
+                }
+                return completions;
+            } else if (args[1].equalsIgnoreCase("remove")) {
+                List<String> completions = new ArrayList<String>();
+                for (OfflinePlayer player : Bukkit.getWhitelistedPlayers()) {
+                    String name = player.getName();
+                    if (StringUtil.startsWithIgnoreCase(name, args[1])) {
+                        completions.add(name);
+                    }
+                }
+                return completions;
+            }
         }
         return ImmutableList.of();
     }

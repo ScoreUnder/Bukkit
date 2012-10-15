@@ -1,10 +1,14 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class BanCommand extends VanillaCommand {
     public BanCommand() {
@@ -37,5 +41,16 @@ public class BanCommand extends VanillaCommand {
     @Override
     public boolean matches(String input) {
         return input.equalsIgnoreCase("ban");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) throws IllegalArgumentException {
+        Validate.notNull(sender, "Sender cannot be null");
+        Validate.notNull(args, "Arguments cannot be null");
+
+        if (args.length == 2) {
+            return super.tabComplete(sender, args);
+        }
+        return ImmutableList.of();
     }
 }

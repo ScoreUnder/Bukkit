@@ -10,7 +10,7 @@ public class StringUtil {
      *
      * @param token String to search for
      * @param originals An iterable collection of strings to filter.
-     * @param collections The collection to add matches to
+     * @param collection The collection to add matches to
      * @return the collection provided that would have the elements copied into
      * @throws UnsupportedOperationException if the collection is immutable and originals contains a string which starts with the specified search string.
      * @throws IllegalArgumentException if any parameter is is null
