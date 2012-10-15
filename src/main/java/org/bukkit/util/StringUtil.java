@@ -1,29 +1,29 @@
 package org.bukkit.util;
 
-import java.util.Iterator;
-
+import java.util.Collection;
 import org.apache.commons.lang.Validate;
 
 public class StringUtil {
 
     /**
-     * Removes all elements of the given list which do not start (case insensitive) with the specified search token.
+     * Copies all elements from the iterable collection of originals to the collection provided.
      *
      * @param token String to search for
-     * @param collection An iterable collection of strings to filter. The collection will be modified if there is a non-match.
-     * @return the collection of strings provided
-     * @throws UnsupportedOperationException if the list is immutable and contains a string which does not start with the specified search string.
-     * @throws IllegalArgumentException if token is null
-     * @throws IlelgalArgumentException if collection is null
-     * @throws IllegalArgumentException if collection contains a null element. <b>Note: the collection may be modified before this is thrown</b>
+     * @param originals An iterable collection of strings to filter.
+     * @param collections The collection to add matches to
+     * @return the collection provided that would have the elements copied into
+     * @throws UnsupportedOperationException if the collection is immutable and originals contains a string which starts with the specified search string.
+     * @throws IllegalArgumentException if any parameter is is null
+     * @throws IllegalArgumentException if originals contains a null element. <b>Note: the collection may be modified before this is thrown</b>
      */
-    public static <T extends Iterable<String>> T retainPartialMatches(final String token, final T collection) throws UnsupportedOperationException, IllegalArgumentException {
+    public static <T extends Collection<String>> T copyPartialMatches(final String token, final Iterable<String> originals, final T collection) throws UnsupportedOperationException, IllegalArgumentException {
         Validate.notNull(token, "Search token cannot be null");
         Validate.notNull(collection, "Collection cannot be null");
-        Iterator<String> iterator = collection.iterator();
-        while (iterator.hasNext()) {
-            if (!startsWithIgnoreCase(iterator.next(), token)) {
-                iterator.remove();
+        Validate.notNull(originals, "Originals cannot be null");
+
+        for (String string : originals) {
+            if (startsWithIgnoreCase(string, token)) {
+                collection.add(string);
             }
         }
 

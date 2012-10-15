@@ -83,10 +83,10 @@ public class TimeCommand extends VanillaCommand {
         Validate.notNull(args, "Arguments cannot be null");
 
         if (args.length == 2) {
-            return StringUtil.retainPartialMatches(args[1], new ArrayList<String>(TABCOMPLETE_ADD_SET));
+            return StringUtil.copyPartialMatches(args[1], TABCOMPLETE_ADD_SET, new ArrayList<String>(TABCOMPLETE_ADD_SET.size()));
         } else if (args.length == 3 && args[1].equalsIgnoreCase("set")) {
-            return StringUtil.retainPartialMatches(args[2], new ArrayList<String>(TABCOMPLETE_DAY_NIGHT));
+            return StringUtil.copyPartialMatches(args[2], TABCOMPLETE_DAY_NIGHT, new ArrayList<String>(TABCOMPLETE_DAY_NIGHT.size()));
         }
-        return  ImmutableList.of();
+        return ImmutableList.of();
     }
 }

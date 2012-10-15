@@ -113,7 +113,7 @@ public class TimingsCommand extends BukkitCommand {
         Validate.notNull(args, "Arguments cannot be null");
 
         if (args.length == 2) {
-            return StringUtil.retainPartialMatches(args[1], new ArrayList<String>(TIMINGS_SUBCOMMANDS));
+            return StringUtil.copyPartialMatches(args[1], TIMINGS_SUBCOMMANDS, new ArrayList<String>(TIMINGS_SUBCOMMANDS.size()));
         }
         return ImmutableList.of();
     }

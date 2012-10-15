@@ -104,7 +104,7 @@ public class WhitelistCommand extends VanillaCommand {
         Validate.notNull(args, "Arguments cannot be null");
 
         if (args.length == 2) {
-            return StringUtil.retainPartialMatches(args[1], new ArrayList<String>(WHITELIST_SUBCOMMANDS));
+            return StringUtil.copyPartialMatches(args[1], WHITELIST_SUBCOMMANDS, new ArrayList<String>(WHITELIST_SUBCOMMANDS.size()));
         } else if (args.length == 3 && (args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("remove"))) {
             return super.tabComplete(sender, args);
         }

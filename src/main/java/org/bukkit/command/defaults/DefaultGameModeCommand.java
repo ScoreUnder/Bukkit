@@ -66,7 +66,7 @@ public class DefaultGameModeCommand extends VanillaCommand {
         Validate.notNull(args, "Arguments cannot be null");
 
         if (args.length == 2) {
-            return StringUtil.retainPartialMatches(args[1], new ArrayList<String>(GAMEMODE_NAMES));
+            return StringUtil.copyPartialMatches(args[1], GAMEMODE_NAMES, new ArrayList<String>(GAMEMODE_NAMES.size()));
         }
         return ImmutableList.of();
     }
