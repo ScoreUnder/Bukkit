@@ -4,15 +4,15 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.util.CollectionUtil;
+import org.bukkit.util.StringUtil;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class BanListCommand extends VanillaCommand {
-    private static final List<String> BANLIST_TYPES = Collections.unmodifiableList(Arrays.asList("ips", "players"));
+    private static final List<String> BANLIST_TYPES = ImmutableList.of("ips", "players");
 
     public BanListCommand() {
         super("banlist");
@@ -51,9 +51,9 @@ public class BanListCommand extends VanillaCommand {
         Validate.notNull(args, "Arguments cannot be null");
 
         if (args.length == 2) {
-            return CollectionUtil.filterPartialMatches(args[1], new ArrayList<String>(BANLIST_TYPES));
+            return StringUtil.retainPartialMatches(args[1], new ArrayList<String>(BANLIST_TYPES));
         }
-        return Collections.emptyList();
+        return ImmutableList.of();
     }
 
     @Override

@@ -1,13 +1,18 @@
 package org.bukkit.command;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.command.defaults.*;
+import org.bukkit.util.StringUtil;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.bukkit.Server;
+
 import static org.bukkit.util.Java15Compat.Arrays_copyOfRange;
 
 public class SimpleCommandMap implements CommandMap {
+    private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
     protected final Map<String, Command> knownCommands = new HashMap<String, Command>();
     protected final Set<String> aliases = new HashSet<String>();
     private final Server server;
@@ -81,7 +86,7 @@ public class SimpleCommandMap implements CommandMap {
 
         Iterator<String> iterator = command.getAliases().iterator();
         while (iterator.hasNext()) {
-            if (!register((String) iterator.next(), fallbackPrefix, command, true)) {
+            if (!register(iterator.next(), fallbackPrefix, command, true)) {
                 iterator.remove();
             }
         }
@@ -150,7 +155,7 @@ public class SimpleCommandMap implements CommandMap {
      * {@inheritDoc}
      */
     public boolean dispatch(CommandSender sender, String commandLine) throws CommandException {
-        String[] args = commandLine.split(" ");
+        String[] args = PATTERN_ON_SPACE.split(commandLine);
 
         if (args.length == 0) {
             return false;
@@ -194,15 +199,59 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     public List<String> tabComplete(CommandSender sender, String cmdLine) {
-        String[] args = cmdLine.split(" ");
+        Validate.notNull(sender, "Sender cannot be null");
+        Validate.notNull(cmdLine, "Command line cannot null");
 
-        if (args.length == 0) {
-            return null;
+        String[] args = PATTERN_ON_SPACE.split(cmdLine);
+
+        if (args.length == 1) {
+            ArrayList<String> completions = new ArrayList<String>();
+            String commandPrefix = args[0];
+            Map<String, Command> knownCommands = this.knownCommands;
+
+            for (VanillaCommand command : fallbackCommands) {
+                String name = command.getName();
+
+                if (!command.testPermissionSilent(sender)) {
+                    continue;
+                }
+                if (knownCommands.containsKey(name)) {
+                    // Don't let a vanilla command override a command added below
+                    // This has to do with the way aliases work
+                    continue;
+                }
+                if (!StringUtil.startsWithIgnoreCase(name, commandPrefix)) {
+                    continue;
+                }
+
+                completions.add('/' + name);
+            }
+
+            for (Map.Entry<String, Command> commandEntry : knownCommands.entrySet()) {
+                Command command = commandEntry.getValue();
+
+                if (!command.testPermissionSilent(sender)) {
+                    continue;
+                }
+
+                String name = commandEntry.getKey(); // Use the alias, not command name
+
+                if (StringUtil.startsWithIgnoreCase(name, commandPrefix)) {
+                    completions.add('/' + name);
+                }
+            }
+
+            Collections.sort(completions, String.CASE_INSENSITIVE_ORDER);
+            return completions;
         }
 
         Command target = getCommand(args[0]);
 
         if (target == null) {
+            return null;
+        }
+
+        if (!target.testPermissionSilent(sender)) {
             return null;
         }
 

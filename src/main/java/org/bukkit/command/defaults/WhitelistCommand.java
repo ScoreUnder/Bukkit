@@ -6,16 +6,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.util.CollectionUtil;
+import org.bukkit.util.StringUtil;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class WhitelistCommand extends VanillaCommand {
-
-    private static final List<String> WHITELIST_SUBCOMMANDS = Collections.unmodifiableList(Arrays.asList("add", "remove", "on", "off", "list", "reload"));
+    private static final List<String> WHITELIST_SUBCOMMANDS = ImmutableList.of("add", "remove", "on", "off", "list", "reload");
 
     public WhitelistCommand() {
         super("whitelist");
@@ -105,10 +104,10 @@ public class WhitelistCommand extends VanillaCommand {
         Validate.notNull(args, "Arguments cannot be null");
 
         if (args.length == 2) {
-            return CollectionUtil.filterPartialMatches(args[1], new ArrayList<String>(WHITELIST_SUBCOMMANDS));
+            return StringUtil.retainPartialMatches(args[1], new ArrayList<String>(WHITELIST_SUBCOMMANDS));
         } else if (args.length == 3 && (args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("remove"))) {
             return super.tabComplete(sender, args);
         }
-        return Collections.emptyList();
+        return ImmutableList.of();
     }
 }

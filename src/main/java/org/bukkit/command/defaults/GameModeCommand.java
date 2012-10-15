@@ -7,15 +7,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
-import org.bukkit.util.CollectionUtil;
+import org.bukkit.util.StringUtil;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class GameModeCommand extends VanillaCommand {
-    private static final List<String> GAMEMODE_NAMES = Collections.unmodifiableList(Arrays.asList("adventure", "creative", "survival"));
+    private static final List<String> GAMEMODE_NAMES = ImmutableList.of("adventure", "creative", "survival");
 
     public GameModeCommand() {
         super("gamemode");
@@ -93,10 +93,10 @@ public class GameModeCommand extends VanillaCommand {
         Validate.notNull(args, "Arguments cannot be null");
 
         if (args.length == 2) {
-            return CollectionUtil.filterPartialMatches(args[1], new ArrayList<String>(GAMEMODE_NAMES));
+            return StringUtil.retainPartialMatches(args[1], new ArrayList<String>(GAMEMODE_NAMES));
         } else if (args.length == 3) {
             return super.tabComplete(sender, args);
         }
-        return Collections.emptyList();
+        return ImmutableList.of();
     }
 }

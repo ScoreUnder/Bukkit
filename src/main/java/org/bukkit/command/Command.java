@@ -12,6 +12,8 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Represents a Command, which executes various tasks upon user input
  */
@@ -57,33 +59,37 @@ public abstract class Command {
      *
      * @param sender Source object which is executing this command
      * @param args All arguments passed to the command, split via ' '
-     * @return a list of tab-completions for the specified arguments
+     * @return a list of tab-completions for the specified arguments. This will never be null. List may be immutable.
+     * @throws IllegalArgumentException if sender is null
+     * @throws IllegalArgumentException if args is null
      */
-    public List<String> tabComplete(CommandSender sender, String[] args) {
+    public List<String> tabComplete(CommandSender sender, String[] args) throws IllegalArgumentException {
         Validate.notNull(sender, "Sender cannot be null");
         Validate.notNull(args, "Arguments cannot be null");
 
         if (!(sender instanceof Player) || args.length == 0) {
-            return Collections.emptyList();
+            return ImmutableList.of();
         }
 
         String lastWord = args[args.length - 1];
         if (lastWord.length() == 0) {
-            return Collections.emptyList(); // Do not complete empty player names
+            return ImmutableList.of(); // Do not complete empty player names
         }
 
-        lastWord = lastWord.toLowerCase();
         Player senderPlayer = (Player) sender;
 
         ArrayList<String> matchedPlayers = new ArrayList<String>();
         for (Player player : sender.getServer().getOnlinePlayers()) {
             String name = player.getName();
-            if (name.toLowerCase().startsWith(lastWord) && senderPlayer.canSee(player)) {
+            if (!senderPlayer.canSee(player)) {
+                continue;
+            }
+            if (name.length() >= lastWord.length() && name.substring(0, lastWord.length()).equalsIgnoreCase(lastWord)) {
                 matchedPlayers.add(name);
             }
         }
 
-        Collections.sort(matchedPlayers);
+        Collections.sort(matchedPlayers, String.CASE_INSENSITIVE_ORDER);
         return matchedPlayers;
     }
 
